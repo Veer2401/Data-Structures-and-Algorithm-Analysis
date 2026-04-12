@@ -49,7 +49,7 @@ public class Heap {
         size = n;
 
         for (int i = 0; i < n; i++) {
-            heap[i] = arr[i];
+            heap[i] = arr[i];  // copy all the elements from input array to heap array.
         }
 
         for (int i = (size / 2) - 1; i >= 0; i--) {
