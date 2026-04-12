@@ -1,46 +1,42 @@
-// Assignment 4
-
-
 import java.util.Scanner;
 
 public class Heap {
-    
+
     static int[] heap;
-    static int capacity,size;
+    static int capacity, size;
     static boolean isMinHeap;
 
-    static void initialize(int cap, boolean minType){
+    static void initialize(int cap, boolean minType) {
         capacity = cap;
         heap = new int[capacity];
         size = 0;
         isMinHeap = minType;
     }
 
-    static void heapify(int i){
-        int left = 2*i+1;
-        int right = 2*i+2;
+    static void heapify(int i) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
         int extreme = i;
 
-        if(isMinHeap){
-            if(left < size && heap[left] < heap[extreme]){
+        if (isMinHeap) {
+            if (left < size && heap[left] < heap[extreme]) {
                 extreme = left;
             }
 
-            if(left < right && heap[right] < heap[extreme]){
+            if (right < size && heap[right] < heap[extreme]) {
                 extreme = right;
             }
-        }
-        else{
-            if(left < size && heap[left] > heap[extreme]){
+        } else {
+            if (left < size && heap[left] > heap[extreme]) {
                 extreme = left;
             }
 
-            if(right < size && heap[right] > heap[extreme]){
+            if (right < size && heap[right] > heap[extreme]) {
                 extreme = right;
             }
         }
 
-        if(extreme != i){
+        if (extreme != i) {
             int temp = heap[i];
             heap[i] = heap[extreme];
             heap[extreme] = temp;
@@ -49,22 +45,20 @@ public class Heap {
         }
     }
 
-    static void createHeap(int[] arr, int n){
-
+    static void createHeap(int[] arr, int n) {
         size = n;
 
-        for(int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             heap[i] = arr[i];
         }
 
-        for(int i = (size/2) - 1;i>=0;i--){
+        for (int i = (size / 2) - 1; i >= 0; i--) {
             heapify(i);
         }
     }
 
-    static void insert(int value){
-
-        if(size == capacity){
+    static void insert(int value) {
+        if (size == capacity) {
             System.out.println("Heap is Full!");
             return;
         }
@@ -73,25 +67,26 @@ public class Heap {
         int current = size;
         size++;
 
-        while(current > 0){
-            int parent = (current - 1) /2;
+        while (current > 0) {
+            int parent = (current - 1) / 2;
 
-            if((isMinHeap && heap[current] < heap[parent]) || 
-                (!isMinHeap && heap[current] > heap[parent])){
-                    int temp = heap[current];
-                    heap[current] = heap[parent];
-                    heap[parent] = temp;
+            if ((isMinHeap && heap[current] < heap[parent]) ||
+                (!isMinHeap && heap[current] > heap[parent])) {
 
-                    current = parent;
-                }
-                else{
-                    break;
-                }
+                int temp = heap[current];
+                heap[current] = heap[parent];
+                heap[parent] = temp;
+
+                current = parent;
+            } else {
+                break;
+            }
         }
+
         System.out.println("Element inserted successfully.");
     }
 
-    static int deleteRoot(){
+    static int deleteRoot() {
         if (size == 0) {
             System.out.println("Heap is Empty! Cannot Delete Elements");
             return -1;
@@ -102,10 +97,12 @@ public class Heap {
         heap[0] = heap[size - 1];
         size--;
 
+        heapify(0);
+
         return root;
     }
 
-    static void heapSort(){
+    static void heapSort() {
         if (size == 0) {
             System.out.println("Heap is Empty! Cannot Sort Elements");
             return;
@@ -114,13 +111,13 @@ public class Heap {
         int originalSize = size;
         int[] backup = new int[capacity];
 
-        for(int i=0;i<size;i++){
+        for (int i = 0; i < size; i++) {
             backup[i] = heap[i];
         }
 
-        System.out.println("Sorted Elements:  ");
+        System.out.println("Sorted Elements:");
 
-        while(size > 0){
+        while (size > 0) {
             System.out.print(deleteRoot() + " ");
         }
 
@@ -130,8 +127,7 @@ public class Heap {
         size = originalSize;
     }
 
-     static void display() {
-
+    static void display() {
         if (size == 0) {
             System.out.println("Heap is Empty!");
             return;
@@ -240,7 +236,4 @@ public class Heap {
 
         sc.close();
     }
-
 }
-
-
