@@ -2,11 +2,14 @@ import java.util.*;
 
 public class Hashing {
 
+    static final int EMPTY = -1;
+    static final int DELETED = -2;
+
     static int[] hashTable = new int[10];
 
-    static{
-        for(int i=0;i<10;i++){
-            hashTable[i] = -1;
+    static {
+        for(int i = 0; i < 10; i++){
+            hashTable[i] = EMPTY;
         }
     }
 
@@ -17,39 +20,40 @@ public class Hashing {
     static void insert(int key){
         int index = hash(key);
 
-        if(hashTable[index] == -1){
+        if(hashTable[index] == EMPTY || hashTable[index] == DELETED){
             hashTable[index] = key;
+            return;
         }
-        else{
-            int i = (index + 1) % 10;
 
-            while(i != index){
-                if(hashTable[i] == -1){
-                    hashTable[i] = key;
-                    return;
-                }
-                i = (i+1) % 10;
+        int i = (index + 1) % 10;
+
+        while(i != index){
+            if(hashTable[i] == EMPTY || hashTable[i] == DELETED){
+                hashTable[i] = key;
+                return;
             }
-            System.out.println("Hash Table is Full!");
+            i = (i + 1) % 10;
         }
+
+        System.out.println("Hash Table is Full!");
     }
 
     static void search(int key){
         int index = hash(key);
-
         int i = index;
 
-        while(hashTable[i] != -1){
+        while(hashTable[i] != EMPTY){
             if(hashTable[i] == key){
                 System.out.println("Element " + key + " found at index " + i);
                 return;
             }
-            i = (i+1) % 10;
 
-            if(i == index){
+            i = (i + 1) % 10;
+
+            if(i == index)
                 break;
-            }
         }
+
         System.out.println("Element not found!");
     }
 
@@ -57,29 +61,43 @@ public class Hashing {
         int index = hash(key);
         int i = index;
 
-        while(hashTable[i] != -1){
+        while(hashTable[i] != EMPTY){
             if(hashTable[i] == key){
-                hashTable[i] = -1;
+                hashTable[i] = DELETED;
                 System.out.println("Element " + key + " deleted from index " + i);
                 return;
             }
-            i = (i+1) % 10;
+
+            i = (i + 1) % 10;
+
+            if(i == index)
+                break;
         }
+
         System.out.println("Element cannot be found!");
     }
 
     static void display(){
-        System.out.println("\nHash Table: ");
-        for(int i=0;i<10;i++){
-            System.out.println("Index " + i + " : " + hashTable[i]);
+        System.out.println("\nHash Table:");
+
+        for(int i = 0; i < 10; i++){
+            if(hashTable[i] == EMPTY){
+                System.out.println("Index " + i + " : EMPTY");
+            }
+            else if(hashTable[i] == DELETED){
+                System.out.println("Index " + i + " : DELETED");
+            }
+            else{
+                System.out.println("Index " + i + " : " + hashTable[i]);
+            }
         }
     }
-    
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int choice, key;
-        
-        do {
+
+        do{
             System.out.println("\n--- HASH TABLE MENU ---");
             System.out.println("1. Insert");
             System.out.println("2. Search");
@@ -91,12 +109,13 @@ public class Hashing {
             choice = sc.nextInt();
 
             switch(choice){
+
                 case 1:
                     System.out.print("Enter element to insert: ");
                     key = sc.nextInt();
                     insert(key);
                     break;
-                
+
                 case 2:
                     System.out.print("Enter element to search for: ");
                     key = sc.nextInt();
@@ -114,13 +133,14 @@ public class Hashing {
                     break;
 
                 case 5:
-                    System.out.println("Exiting ");
+                    System.out.println("Exiting...");
                     break;
 
                 default:
                     System.out.println("Enter correct choice!");
             }
-        } while (choice != 5);
+
+        } while(choice != 5);
 
         sc.close();
     }
