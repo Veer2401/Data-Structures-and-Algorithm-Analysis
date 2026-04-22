@@ -1,101 +1,106 @@
 import java.util.*;
 
-public class Hashing {
+class Student{
 
-    static final int EMPTY = -1;
-    static final int DELETED = -2;
+    int key;
+    String name;
 
-    static int[] hashTable = new int[10];
-
-    static {
-        for(int i = 0; i < 10; i++){
-            hashTable[i] = EMPTY;
-        }
+    Student(int key, String name){
+        this.key = key;
+        this.name = name;
     }
+}
+
+public class Hashing{
+
+    static Student[] hashTable = new Student[10];
+    static final Student DELETED = new Student(-2, "DELETED");
 
     static int hash(int key){
         return key % 10;
     }
 
-    static void insert(int key){
+    static void insert(int key, String name){
+
         int index = hash(key);
 
-        if(hashTable[index] == EMPTY || hashTable[index] == DELETED){
-            hashTable[index] = key;
+        if(hashTable[index] == null || hashTable[index] == DELETED){
+            hashTable[index] = new Student(key,name);
+            System.out.println("Inserted at index " + index);
             return;
         }
 
-        int i = (index + 1) % 10;
+        int i = (index + 1)%10;
 
-        while(i != index){
-            if(hashTable[i] == EMPTY || hashTable[i] == DELETED){
-                hashTable[i] = key;
+        if(index != i){
+            if(hashTable[i] == null || hashTable[i] == DELETED){
+                hashTable[i] = new Student(key,name);
+                System.out.println("Inserted at index " + i);
                 return;
             }
-            i = (i + 1) % 10;
+            i = (i+1)%10;
         }
 
-        System.out.println("Hash Table is Full!");
-    }
-
-    static void search(int key){
-        int index = hash(key);
-        int i = index;
-
-        while(hashTable[i] != EMPTY){
-            if(hashTable[i] == key){
-                System.out.println("Element " + key + " found at index " + i);
-                return;
-            }
-
-            i = (i + 1) % 10;
-
-            if(i == index)
-                break;
-        }
-
-        System.out.println("Element not found!");
+        System.out.println("Element inserted successfully");
     }
 
     static void delete(int key){
+
         int index = hash(key);
         int i = index;
 
-        while(hashTable[i] != EMPTY){
-            if(hashTable[i] == key){
+        while(hashTable[i] != null){
+            if(hashTable[i] != DELETED && hashTable[i].key == key){
                 hashTable[i] = DELETED;
-                System.out.println("Element " + key + " deleted from index " + i);
+                System.out.println("Deleted from index " + i);
                 return;
             }
-
-            i = (i + 1) % 10;
-
-            if(i == index)
-                break;
+            i = (i+1) % 10;
+            if(i == index)break; 
         }
 
-        System.out.println("Element cannot be found!");
+        System.out.println("Element cannot be found");
+    }
+
+    static void search(int key){
+
+        int index = hash(key);
+        int i = index;
+
+        while(hashTable[i] != null){
+            if(hashTable[i] != DELETED && hashTable[i].key == key){
+                System.out.println("Found at index " + i + " Name: " + hashTable[i].name);
+                return;
+            }
+            i = (i+1) % 10;
+            if(i==index)
+                break;
+        }
+        System.out.println("Element not found");
     }
 
     static void display(){
-        System.out.println("\nHash Table:");
 
-        for(int i = 0; i < 10; i++){
-            if(hashTable[i] == EMPTY){
-                System.out.println("Index " + i + " : EMPTY");
+        System.out.println("Hash Table: ");
+
+        for(int i=0;i<10;i++){
+            if(hashTable[i] == null){
+                System.out.println("Index " + i + " EMPTY");
             }
             else if(hashTable[i] == DELETED){
-                System.out.println("Index " + i + " : DELETED");
+                System.out.println("Index " + i + " DELETED");
             }
             else{
-                System.out.println("Index " + i + " : " + hashTable[i]);
+                System.out.println("Index " + i + " Key " + hashTable[i].key + " " + "Name: " + hashTable[i].name);
             }
         }
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int choice, key;
+
+         int choice, key;
+        String name;
 
         do{
             System.out.println("\n--- HASH TABLE MENU ---");
@@ -111,19 +116,22 @@ public class Hashing {
             switch(choice){
 
                 case 1:
-                    System.out.print("Enter element to insert: ");
+                    System.out.print("Enter key: ");
                     key = sc.nextInt();
-                    insert(key);
+                    sc.nextLine(); // consume newline
+                    System.out.print("Enter name: ");
+                    name = sc.nextLine();
+                    insert(key, name);
                     break;
 
                 case 2:
-                    System.out.print("Enter element to search for: ");
+                    System.out.print("Enter key to search: ");
                     key = sc.nextInt();
                     search(key);
                     break;
 
                 case 3:
-                    System.out.print("Enter element to delete: ");
+                    System.out.print("Enter key to delete: ");
                     key = sc.nextInt();
                     delete(key);
                     break;
