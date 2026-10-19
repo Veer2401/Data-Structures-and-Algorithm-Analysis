@@ -1,81 +1,56 @@
 #include <iostream>
-
 using namespace std;
 
-struct Job{
+struct Job {
     char id;
-    int deadline;
-    int profit;
+    int deadline, profit;
 };
 
-int main(){
+int main() {
     int n;
-
-    cout<<"Enter number of jobs: ";
     cin >> n;
 
     Job jobs[n];
 
-    for(int i=0;i<n;i++){
-        cout << "Enter Job ID: ";
-        cin >> jobs[i].id;
+    for (int i = 0; i < n; i++)
+        cin >> jobs[i].id >> jobs[i].deadline >> jobs[i].profit;
 
-        cout << "Enter deadline: ";
-        cin >> jobs[i].deadline;
-
-        cout << "Enter profit: ";
-        cin >> jobs[i].profit;
-    }
-
-    //sort by profits
-    
-    for(int i=0;i<n-1;i++){
-        for(int j=0;j<n-i-1;j++){
-            if(jobs[j].profit < jobs[j+1].profit){
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (jobs[j].profit < jobs[j + 1].profit) {
                 Job temp = jobs[j];
-                jobs[j] = jobs[j+1];
-                jobs[j+1] = temp;
+                jobs[j] = jobs[j + 1];
+                jobs[j + 1] = temp;
             }
         }
     }
 
-    int maxDeadline = 0;
+    int max = 0, profit = 0;
 
-    for(int i=0;i<n;i++){
-        if(jobs[i].deadline > maxDeadline){
-            maxDeadline = jobs[i].deadline;
-        }
-    }
+    for (int i = 0; i < n; i++)
+        if (jobs[i].deadline > max)
+            max = jobs[i].deadline;
 
-    char slot[maxDeadline + 1];
+    char slot[max + 1];
 
-    for(int i=0; i<= maxDeadline; i++){
+    for (int i = 0; i <= max; i++)
         slot[i] = '-';
-    }
 
-    int totalProfit = 0;
-
-    for(int i=0; i<n; i++){
-        for(int j = jobs[i].deadline; j >= 1; j--){
-            if(slot[j] == '-'){
+    for (int i = 0; i < n; i++) {
+        for (int j = jobs[i].deadline; j >= 1; j--) {
+            if (slot[j] == '-') {
                 slot[j] = jobs[i].id;
-                totalProfit = totalProfit + jobs[i].profit;
+                profit += jobs[i].profit;
                 break;
             }
         }
     }
 
-    cout << "\nScheduled Job Sequence: ";
-
-    for (int i = 1; i <= maxDeadline; i++)
-    {
+    cout << "Jobs: ";
+    for (int i = 1; i <= max; i++)
         if (slot[i] != '-')
-        {
             cout << slot[i] << " ";
-        }
-    }
 
-    cout << "\nMaximum Profit: " << totalProfit << endl;
-
+    cout << "\nMaximum Profit: " << profit;
     return 0;
 }
