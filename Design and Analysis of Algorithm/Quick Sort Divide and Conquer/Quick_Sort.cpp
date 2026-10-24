@@ -1,222 +1,70 @@
-
 #include <iostream>
-#include <vector>
-#include <cstdlib>
 #include <ctime>
-#include <chrono>
-
 using namespace std;
-using namespace chrono;
 
-long long comparisons = 0;
+int type;
 
-//----------------------------------------
-// Swap Function
-//----------------------------------------
-void swapValues(int &a, int &b)
-{
-    int temp = a;
-    a = b;
-    b = temp;
-}
+int partition(int arr[], int low, int high) {
+    int p;
 
-//----------------------------------------
-// Pivot Types
-//----------------------------------------
-enum PivotType
-{
-    FIRST,
-    LAST,
-    MIDDLE,
-    RANDOM
-};
+    if (type == 1) p = low;
+    else if (type == 2) p = high;
+    else if (type == 3) p = (low + high) / 2;
+    else p = low + rand() % (high - low + 1);
 
-//----------------------------------------
-// Choose Pivot
-//----------------------------------------
-int choosePivot(vector<int> &A, int low, int high, PivotType type)
-{
-    if(type == FIRST)
-        return low;
+    swap(arr[low], arr[p]);
 
-    else if(type == LAST)
-        return high;
+    int pivot = arr[low], i = low + 1, j = high;
 
-    else if(type == MIDDLE)
-        return (low + high) / 2;
+    while (i <= j) {
+        while (i <= high && arr[i] <= pivot) i++;
+        while (arr[j] > pivot) j--;
 
-    else
-        return low + rand() % (high - low + 1);
-}
-
-//----------------------------------------
-// Partition
-//----------------------------------------
-int partition(vector<int> &A, int low, int high, PivotType type)
-{
-    int pivotIndex = choosePivot(A, low, high, type);
-
-    swapValues(A[pivotIndex], A[high]);
-
-    int pivot = A[high];
-
-    int i = low - 1;
-
-    for(int j = low; j < high; j++)
-    {
-        comparisons++;
-
-        if(A[j] <= pivot)
-        {
-            i++;
-            swapValues(A[i], A[j]);
-        }
+        if (i < j) swap(arr[i], arr[j]);
     }
 
-    swapValues(A[i + 1], A[high]);
-
-    return i + 1;
+    swap(arr[low], arr[j]);
+    return j;
 }
 
-//----------------------------------------
-// Quick Sort
-//----------------------------------------
-void quickSort(vector<int> &A, int low, int high, PivotType type)
-{
-    if(low < high)
-    {
-        int p = partition(A, low, high, type);
-
-        quickSort(A, low, p - 1, type);
-
-        quickSort(A, p + 1, high, type);
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int p = partition(arr, low, high);
+        quickSort(arr, low, p - 1);
+        quickSort(arr, p + 1, high);
     }
 }
 
-//----------------------------------------
-// Generate Random Array
-//----------------------------------------
-vector<int> randomArray(int n)
-{
-    vector<int> A(n);
-
-    for(int i = 0; i < n; i++)
-        A[i] = rand() % 100000;
-
-    return A;
-}
-
-//----------------------------------------
-// Generate Sorted Array
-//----------------------------------------
-vector<int> sortedArray(int n)
-{
-    vector<int> A(n);
-
-    for(int i = 0; i < n; i++)
-        A[i] = i;
-
-    return A;
-}
-
-//----------------------------------------
-// Generate Reverse Sorted Array
-//----------------------------------------
-vector<int> reverseArray(int n)
-{
-    vector<int> A(n);
-
-    for(int i = 0; i < n; i++)
-        A[i] = n - i;
-
-    return A;
-}
-
-//----------------------------------------
-// Run Experiment
-//----------------------------------------
-void runExperiment(vector<int> original,
-                   PivotType pivot,
-                   string pivotName)
-{
-    long long totalComparisons = 0;
-    long long totalTime = 0;
-
-    for(int i = 0; i < 3; i++)
-    {
-        vector<int> A = original;
-
-        comparisons = 0;
-
-        auto start = high_resolution_clock::now();
-
-        quickSort(A, 0, A.size() - 1, pivot);
-
-        auto end = high_resolution_clock::now();
-
-        long long timeTaken =
-        duration_cast<microseconds>(end - start).count();
-
-        totalComparisons += comparisons;
-        totalTime += timeTaken;
-    }
-
-    cout << pivotName << "\t\t"
-         << totalComparisons / 3 << "\t\t"
-         << totalTime / 3 << " us"
-         << endl;
-}
-
-//----------------------------------------
-// Display Results
-//----------------------------------------
-void displayResults(vector<int> data, string inputType)
-{
-    cout << "\n============================================\n";
-    cout << "        " << inputType << " INPUT RESULTS\n";
-    cout << "============================================\n";
-
-    cout << "Pivot Type\tComparisons\tTime\n";
-    cout << "--------------------------------------------\n";
-
-    runExperiment(data, FIRST, "First");
-    runExperiment(data, LAST, "Last");
-    runExperiment(data, MIDDLE, "Middle");
-    runExperiment(data, RANDOM, "Random");
-}
-
-//----------------------------------------
-// Main
-//----------------------------------------
-int main()
-{
+int main() {
     srand(time(0));
 
     int n;
-
-    cout << "Enter input size: ";
+    cout << "Enter number of elements: ";
     cin >> n;
 
+    int arr[n], a[n];
 
-    vector<int> random = randomArray(n);
-    vector<int> sorted = sortedArray(n);
-    vector<int> reversed = reverseArray(n);
+    for (int i = 0; i < n; i++)
+        cin >> arr[i];
 
+    string names[] = {"First", "Last", "Middle", "Random"};
 
-    cout << "\nInput Size = " << n << endl;
+    for (type = 1; type <= 4; type++) {
+        for (int i = 0; i < n; i++)
+            a[i] = arr[i];
 
+        clock_t start = clock();
+        quickSort(a, 0, n - 1);
+        clock_t end = clock();
 
-    // Random Input
-    displayResults(random, "RANDOM");
+        cout << names[type - 1] << " Pivot: ";
+        for (int i = 0; i < n; i++)
+            cout << a[i] << " ";
 
-
-    // Sorted Input
-    displayResults(sorted, "SORTED");
-
-
-    // Reverse Sorted Input
-    displayResults(reversed, "REVERSE SORTED");
-
+        cout << "\nTime: "
+             << double(end - start) / CLOCKS_PER_SEC
+             << " seconds\n\n";
+    }
 
     return 0;
 }
