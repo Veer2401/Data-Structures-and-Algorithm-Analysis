@@ -1,105 +1,57 @@
+import java.util.*;
 
-#include <iostream>
-using namespace std;
+public class Main {
 
-bool isSafe(int vertex, int c, int graph[20][20],
-            int color[], int V)
-{
-    for (int i = 0; i < V; i++)
-    {
-        if (graph[vertex][i] == 1 && color[i] == c)
-        {
-            return false;
-        }
-    }
+    static boolean graphColor(int vertex, int vertices, int m, int graph[][], int color[]){
+        
+        if(vertex == vertices)
+            return true;
 
-    return true;
-}
+        for(int c=1;c<=m;c++){
+            boolean safe = true;
 
-bool graphColor(int vertex, int V, int m,
-                int graph[20][20], int color[])
-{
-    if (vertex == V)
-    {
-        return true;
-    }
-
-    for (int c = 1; c <= m; c++)
-    {
-        if (isSafe(vertex, c, graph, color, V))
-        {
-            color[vertex] = c;
-
-            if (graphColor(vertex + 1, V, m, graph, color))
-            {
-                return true;
+            for(int i=0;i<vertices;i++){
+                if(graph[vertex][i] == 1 && color[i] == c){
+                    safe = false;
+                    break;
+                }
             }
+            if(safe){
+                color[vertex] = c;
 
-            color[vertex] = 0;
-        }
+                if(graphColor(vertex+1, vertices, m, graph, color))
+                    return true;
+                
+                color[vertex] = 0;
+            }
+        }    
+        return false;
     }
 
-    return false;
-}
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-int main()
-{
-    int V, m;
-    int graph[20][20];
-    int color[20] = {0};
+        System.out.print("Enter number of vertices: ");
+        int vertices = sc.nextInt();
 
-    cout << "Enter number of vertices: ";
-    cin >> V;
+        System.out.print("Enter colors: ");
+        int m = sc.nextInt();
 
-    if (V < 1 || V > 20)
-    {
-        cout << "Enter vertices between 1 and 20.\n";
-        return 0;
-    }
+        int graph[][] = new int[vertices][vertices];
+        int color[] = new int[vertices];
 
-    cout << "Enter number of colors (m): ";
-    cin >> m;
-
-    if (m < 1)
-    {
-        cout << "Number of colors must be positive.\n";
-        return 0;
-    }
-
-    cout << "Enter adjacency matrix (row by row):\n";
-
-    for (int i = 0; i < V; i++)
-    {
-        for (int j = 0; j < V; j++)
-        {
-            cin >> graph[i][j];
-        }
-    }
-
-    if (graphColor(0, V, m, graph, color))
-    {
-        cout << "\nGraph Coloring Solution:\n";
-
-        for (int i = 0; i < V; i++)
-        {
-            cout << "color[" << i << "] = "
-                 << color[i] << endl;
+        System.out.println("Enter adjacency matrix: ");
+        for(int i=0;i<vertices;i++){
+            for(int j=0;j<vertices;j++){
+                graph[i][j] = sc.nextInt();
+            }
         }
 
-        cout << "Solution array: [ ";
+        if(graphColor(0, vertices, m, graph, color))
+            System.out.println("Solution: " + Arrays.toString(color));
+        else
+            System.out.println("No solution");
 
-        for (int i = 0; i < V; i++)
-        {
-            cout << color[i] << " ";
-        }
-
-        cout << "]\n";
+        sc.close();
     }
-    else
-    {
-        cout << "No solution exists with " << m
-             << " colors for this graph.\n";
-    }
-
-    return 0;
 }
