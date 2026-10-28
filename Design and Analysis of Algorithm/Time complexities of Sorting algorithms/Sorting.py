@@ -2,6 +2,13 @@
 #include <ctime>
 using namespace std;
 
+static void printArray(int a[], int n, int pass) {
+        System.out.print("Pass " + pass + ": ");
+        for(int i = 0; i < n; i++)
+            System.out.print(a[i] + " ");
+        System.out.println();
+    }
+
 void selectionSort(int a[], int n){
     for(int i=0;i<n-1;i++){
         for(int j=i+1;j<n;j++){
