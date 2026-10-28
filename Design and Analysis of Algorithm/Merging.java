@@ -2,7 +2,11 @@ import java.util.*;
 
 public class Merging {
 
+    static int mergeCount = 0;
+
     static void merge(int arr[], int low, int mid, int high){
+
+        mergeCount++;
         int temp[] = new int[arr.length];
         int i = low, j = mid + 1, k = low;
 
