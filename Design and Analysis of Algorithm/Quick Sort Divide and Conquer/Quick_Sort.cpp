@@ -1,68 +1,92 @@
-#include <iostream>
-#include <ctime>
+import java.util.*;
 
-using namespace std;
+public class Main {
 
-int type;
+    static int type;
+    static int count = 0;
 
-int partition(int arr[], int low, int high){
-    int p;
-
-    if(type ==1) p = low;//first element;
-    else if(type == 2) p = high; //last element
-    else if(type == 3) p = (low+high)/2; //middle element
-    else p = low + rand() % (high-low+1);//random element
-
-    swap(arr[low],arr[p]); // expects pivot to be at start position
-
-    int pivot = arr[low], i = low+1, j = high;
-
-    while(i<=j){
-        while(i <= high && arr[i] <= pivot) i++;
-        while(arr[j] > pivot)j--;
-
-        if(i<j) swap(arr[i],arr[j]);
+    static void swap(int arr[], int i, int j){
+        int t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
     }
-    swap(arr[low],arr[j]);
-    return j;
-}
 
-void quickSort(int arr[], int low, int high){
-    if(low < high){
-        int p = partition(arr,low,high);
-        quickSort(arr,low,p-1);
-        quickSort(arr,p+1,high);
-    }
-}
+    static int partition(int arr[], int low, int high){
 
-int main(){
-    srand(time(0));
-
-    int n;
-    cout << "Enter number of elements: ";
-    cin >> n;
-
-    int arr[n],a[n];
-
-    cout << "Enter elements: ";
-    for(int i=0;i<n;i++)
-        cin >> arr[i];
-    
-    string names[] = {"First","Last","Middle","Random"};
-
-    for(type =1;type<=4;type++){
-        for(int i=0;i<n;i++)
-            a[i] = arr[i];
+        int p;
         
-        clock_t start = clock();
-        quickSort(a,0,n-1);
-        clock_t end = clock();
+        if(type == 1) p = low;
+        else if(type == 2) p = high;
+        else if(type == 3) p = (low+high)/2;
+        else p = low + (int)(Math.random() * (high - low+1));
 
-        cout << names[type-1] << " Pivot: ";
-        for(int i=0;i<n;i++)
-            cout << a[i] << " ";
-        
-        cout << "\n Time: " << double(end-start)*1000/CLOCKS_PER_SEC << " ms";
+        swap(arr, low, p);
+
+        int pivot = arr[low], i = low+1, j = high;
+
+        while(i<=j){
+
+            while(i<=high && arr[i] <= pivot){
+                count++;
+                i++;
+            }
+
+            while(arr[j] > pivot){
+                count++;
+                j--;
+            }
+
+            if(i<j){
+                swap(arr, i, j);
+            }
+        }
+        swap(arr, low, j);
+        return j;
     }
-    return 0;
-}
+
+    static void quickSort(int arr[], int low, int high){
+        if(low < high){
+            int p = partition(arr, low, high);
+            quickSort(arr, low, p-1);
+            quickSort(arr, p+1, high);
+        }
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of elements: ");
+        int n = sc.nextInt();
+
+        int arr[] = new int[n];
+        int a[] = new int[n];
+
+        System.out.println("Enter elements: ");
+        for(int i=0;i<n;i++){
+            arr[i] = sc.nextInt();
+        }
+
+        String names[] = {"First", "Last", "Middle", "Random"};
+
+        for(type=1;type<=4;type++){
+            for(int i=0;i<n;i++){
+                a[i] = arr[i];
+            }
+
+            count = 0;
+
+            long start = System.nanoTime();
+            quickSort(a, 0, n-1);
+            long end = System.nanoTime();
+
+            System.out.print("\n" + names[type - 1] + " Pivot: ");
+            for(int i = 0; i < n; i++)
+                System.out.print(a[i] + " ");
+
+            System.out.println("\nComparisons: " + count);
+            System.out.println("Time: " +
+                    (end - start) / 1_000_000.0 + " ms");
+        }
+
+        sc.close();
+        }
+    }
