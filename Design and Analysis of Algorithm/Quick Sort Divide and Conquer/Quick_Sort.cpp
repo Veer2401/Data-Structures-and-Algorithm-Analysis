@@ -6,7 +6,7 @@ public class Main {
 
     static int partition(int arr[], int low, int high){
 
-        int p = low;
+        int p = low + (int)(Math.random() * (high-low+1));
         swap(arr, low, p);
         int pivot = arr[low], i = low+1, j = high;
 
